@@ -1,6 +1,6 @@
 # Bot4LADS
 <p align="center">
-  <img src="https://img.shields.io/github/v/tag/GuilhermeEsdras/Bot4LADS?color=yellow&label=version&style=flat-square" />
+  <img src="https://img.shields.io/github/v/tag/GuilhermeEsdras/Bot4LADS?color=orange&label=version&style=flat-square" />
   <img src="https://img.shields.io/badge/made%20with-typescript-blue?style=flat-square" />
   <img src="https://img.shields.io/github/license/GuilhermeEsdras/bot4LADS?style=flat-square" />
 </p>
