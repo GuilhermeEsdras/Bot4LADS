@@ -1,7 +1,8 @@
 # Bot4LADS
 <p align="center">
-  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" /></a>
-  <a href="https://opensource.org/licenses/MIT"><img src="https://badgen.net/badge/made with/typescript/blue?icon=typescript" /></a>
+  <img src="https://img.shields.io/github/v/tag/GuilhermeEsdras/Bot4LADS?color=yellow&label=version&style=flat-square" />
+  <img src="https://img.shields.io/badge/made%20with-typescript-blue?style=flat-square" />
+  <img src="https://img.shields.io/github/license/GuilhermeEsdras/bot4LADS?style=flat-square" />
 </p>
 
 <p align="center">
