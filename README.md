@@ -9,7 +9,7 @@
   <img src="https://raw.githubusercontent.com/GuilhermeEsdras/Bot4LADS/main/assets/images/Bot4LADS-Banner.png" width="600" />
 </p>
 
-<p align="center"> A Discord Bot fully written in TypeScript for the <strong>LADS</strong> (<em>Laboratório de Análise e Desenvolvimento de Sistemas</em>) of IFPB Campus Campina Grande.</p>
+<p align="center"> A Discord Bot fully written in TypeScript for the <strong>LADS</strong> (<em>Systems Analysis and Development Laboratory</em>) of IFPB-CG.</p>
 
 <!-- Table of Contents -->
 # Table of Contents <!-- omit in toc -->
