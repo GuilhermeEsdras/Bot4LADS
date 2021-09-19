@@ -149,3 +149,6 @@ dist
 
 # and uncomment the following lines
 # .pnp.*
+
+# Useless and local temp files
+assets/Trash/*
