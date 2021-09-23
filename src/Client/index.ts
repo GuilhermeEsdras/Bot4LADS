@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { Client, Collection } from 'discord.js';
 import { config } from 'dotenv';
 import { readdirSync } from 'fs';
