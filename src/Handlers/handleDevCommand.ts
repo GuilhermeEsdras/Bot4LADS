@@ -6,8 +6,8 @@ import { criaLogger, Logger } from '../Logs';
 
 export const handler: Handler = {
   nome: 'dev',
-  handle: (client: ExtendedClient, msg, args) => {
-    const logger: Logger = criaLogger('Handler');
+  handle: async (client: ExtendedClient, msg, args) => {
+    const logger: Logger = criaLogger('Dev Handler');
 
     const cmd = args.shift().toLocaleLowerCase();
 
@@ -19,6 +19,8 @@ export const handler: Handler = {
 
     logger.success('Handler executado e comando validado com sucesso');
 
-    comando.run(client, msg, args);
+    await comando.run(client, msg, args);
+
+    console.log(`|------------------------------------------------|`);
   },
 };

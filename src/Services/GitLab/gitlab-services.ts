@@ -1,10 +1,11 @@
 import request from './gitlab-request';
 
-const getUserAvatar = async (email: string) => {
-  request.get(`/avatar?email=${email}`).then((resp) => {
-    console.log(resp.data);
-    return resp.data;
-  });
-};
+export class GitLabService {
+  public async getUserAvatar(email: string) {
+    return request.get(`/avatar?email=${email}`).then((response) => {
+      return response.data;
+    });
+  }
+}
 
-export { getUserAvatar };
+export const gitLabService = () => new GitLabService();

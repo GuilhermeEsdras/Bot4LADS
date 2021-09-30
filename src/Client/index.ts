@@ -15,6 +15,7 @@ class ExtendedClient extends Client {
 
   public handlers: Collection<string, Handler> = new Collection();
 
+  public admCommands: Collection<string, Comando> = new Collection();
   public devCommands: Collection<string, Comando> = new Collection();
   public issueCommands: Collection<string, Comando> = new Collection();
   public repoCommands: Collection<string, Comando> = new Collection();
@@ -80,6 +81,9 @@ class ExtendedClient extends Client {
     /* ----------------------------------------------------------------------------- */
 
     this.printUtils.printHeader('Iniciando leitura das Bases de Comandos', '-');
+
+    const admCommandsPath = path.join(__dirname, '..', 'Commands', 'Admin');
+    regCommands(admCommandsPath, this.devCommands);
 
     const devCommandsPath = path.join(__dirname, '..', 'Commands', 'Dev');
     regCommands(devCommandsPath, this.devCommands);

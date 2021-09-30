@@ -15,7 +15,7 @@ export const evento: Evento = {
       console.log(sepStr.repeat(quant));
     };
     const sepStr = '=';
-    const sepQuant = 62;
+    const sepQuant = 75;
 
     sep(sepStr, sepQuant);
 

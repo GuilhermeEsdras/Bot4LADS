@@ -106,7 +106,7 @@ export default function handleCommand(
 
   logger.success('Executado com sucesso!');
 
-  console.log(`|------------------------------------------------|`);
+  logger.separator(10);
 
   return true;
 }
