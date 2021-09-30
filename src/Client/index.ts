@@ -5,11 +5,13 @@ import path from 'path';
 
 import { Config, Comando, Evento, Handler } from '~/Interfaces';
 
-import ConfigJson from '../config.json';
+import ConfigJson from '../Data/config.json';
 import { criaLogger, Logger } from '../Logs';
+import { iniciaPrintUtils, PrintUtils } from '../Utils/PrintUtils';
 
 class ExtendedClient extends Client {
   public logger: Logger = criaLogger(ExtendedClient.name);
+  public printUtils: PrintUtils = iniciaPrintUtils();
 
   public handlers: Collection<string, Handler> = new Collection();
 
@@ -27,9 +29,7 @@ class ExtendedClient extends Client {
 
     /* ----------------------------------------------------------------------------- */
 
-    console.log('|---------------------------------------|');
-    console.log('| Iniciando leitura da Base de Handlers |');
-    console.log('|---------------------------------------|');
+    this.printUtils.printHeader('Iniciando leitura da Base de Handlers', '-');
 
     const handlersPath = path.join(__dirname, '..', 'Handlers');
     readdirSync(handlersPath).forEach((arquivo) => {
@@ -79,9 +79,7 @@ class ExtendedClient extends Client {
 
     /* ----------------------------------------------------------------------------- */
 
-    console.log('|---------------------------------------|');
-    console.log('| Iniciando leitura da Base de Comandos |');
-    console.log('|---------------------------------------|');
+    this.printUtils.printHeader('Iniciando leitura das Bases de Comandos', '-');
 
     const devCommandsPath = path.join(__dirname, '..', 'Commands', 'Dev');
     regCommands(devCommandsPath, this.devCommands);
@@ -94,9 +92,7 @@ class ExtendedClient extends Client {
 
     /* ----------------------------------------------------------------------------- */
 
-    console.log('|--------------------------------------|');
-    console.log('| Iniciando leitura da Base de Eventos |');
-    console.log('|--------------------------------------|');
+    this.printUtils.printHeader('Iniciando leitura da Base de Eventos', '-');
 
     const enventosPath = path.join(__dirname, '..', 'Events');
     readdirSync(enventosPath).forEach(async (dir) => {

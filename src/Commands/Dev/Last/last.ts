@@ -1,11 +1,9 @@
-import axios from 'axios';
 import { MessageEmbed } from 'discord.js';
 
 import ExtendedClient from '~/Client';
 import { Comando } from '~/Interfaces';
 
 import { criaLogger, Logger } from '../../../Logs';
-import { settings } from '../../../Settings/APIs/apisettings';
 import activity from './activity';
 import comment from './comment';
 import commit from './commit';

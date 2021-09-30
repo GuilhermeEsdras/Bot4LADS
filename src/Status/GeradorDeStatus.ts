@@ -4,6 +4,12 @@ import ExtendedClient from '~/Client';
 
 // @TODO: Alterar o status baseado na tarefa atual do bot
 export class GeradorDeStatus {
+  private debug: boolean;
+
+  constructor(debug: boolean) {
+    this.debug = debug;
+  }
+
   private setAtividade(
     client: ExtendedClient,
     options: ActivityOptions,
@@ -12,11 +18,14 @@ export class GeradorDeStatus {
   ) {
     client.user
       .setActivity(options)
-      .then(() => console.log(`Atividade ${num} setada com sucesso!`))
+      .then(() => {
+        this.debug && console.log(`Atividade ${num} setada com sucesso!`);
+      })
       .catch((err) => {
-        console.error(
-          `Ops! Houve um erro ao setar atividade ${num}! Log:` + err
-        );
+        this.debug &&
+          console.error(
+            `Ops! Houve um erro ao setar atividade ${num}! Log:` + err
+          );
       })
       .finally(() => this.setStatus(client, status, num));
   }
@@ -28,17 +37,24 @@ export class GeradorDeStatus {
   ) {
     client.user
       .setStatus(status)
-      .then(() => console.log(`Status ${num} setado com sucesso!`))
-      .catch((err) => {
-        console.error(`Ops! Houve um erro ao setar status ${num}! Log:` + err);
+      .then(() => {
+        this.debug && console.log(`Status ${num} setado com sucesso!`);
       })
-      .finally(() => console.log(`Atualizador de Status ${num} finalizado!`));
+      .catch((err) => {
+        this.debug &&
+          console.error(
+            `Ops! Houve um erro ao setar status ${num}! Log:` + err
+          );
+      })
+      .finally(() => {
+        this.debug && console.log(`Atualizador de Status ${num} finalizado!`);
+      });
   }
 
   public async atualizaStatus(client: ExtendedClient) {
     try {
       setInterval(() => {
-        console.log('---');
+        this.debug && console.log('---');
         const numAleatorio = Math.floor(Math.random() * 4);
         switch (numAleatorio) {
           case 0:
@@ -101,9 +117,10 @@ export class GeradorDeStatus {
         }
       }, 30000);
     } catch (error) {
-      console.error('Ops! Houve um erro no Gerador de Status' + error);
+      this.debug &&
+        console.error('Ops! Houve um erro no Gerador de Status' + error);
     }
   }
 }
 
-export const iniciaGeradorDeStatus = () => new GeradorDeStatus();
+export const geraStatus = (debug: boolean) => new GeradorDeStatus(debug);
