@@ -1,3 +1,7 @@
 {
-  "prefix": "b4l!"
+  "prefix": "b4l!",
+  "gitlab": {
+    "API_URL": "https://git.synchro.com.br/api/v4",
+    "default_timeout": 1000
+  }
 }

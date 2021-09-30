@@ -4,7 +4,7 @@ import ExtendedClient from '~/Client';
 import { Comando } from '~/Interfaces';
 
 import { criaLogger, Logger } from '../../../Logs';
-import { settings } from '../../../Settings/APIs/apisettings';
+import { getUserAvatar } from '../../../Services/GitLab/gitlab-services';
 
 export const comando: Comando = {
   nome: 'avatar',
@@ -15,24 +15,19 @@ export const comando: Comando = {
       `Comando "${comando.nome}" (por ${msg.member.user.tag})`
     );
 
-    const email = args;
+    const email = args[0];
 
-    const instance = axios.create({
-      baseURL: settings.baseURL,
-      timeout: settings.timeout,
-      headers: {
-        Authorization: settings.headers_authorization,
-      },
-    });
+    // const response = await instance
+    //   .get(`/avatar?email=${email}`)
+    //   .then((resp) => {
+    //     console.log(resp.data);
+    //     return resp.data;
+    //   });
 
-    const response = await instance
-      .get(`/avatar?email=${email}`)
-      .then((resp) => {
-        console.log(resp.data);
-        return resp.data;
-      });
+    const response = await getUserAvatar(email);
 
-    msg.reply(response.avatar_url);
+    console.log(response);
+
     logger.success('Comando finalizado com sucesso.');
   },
 };
