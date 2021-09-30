@@ -3,13 +3,20 @@ import { config } from 'dotenv';
 import { readdirSync } from 'fs';
 import path from 'path';
 
-import { Config, Comando, Evento } from '~/Interfaces';
+import { Config, Comando, Evento, Handler } from '~/Interfaces';
 
 import ConfigJson from '../config.json';
+import { criaLogger, Logger } from '../Logs';
 
 class ExtendedClient extends Client {
-  public siglas: Collection<string, Comando> = new Collection();
-  public comandos: Collection<string, Comando> = new Collection();
+  public logger: Logger = criaLogger(ExtendedClient.name);
+
+  public handlers: Collection<string, Handler> = new Collection();
+
+  public devCommands: Collection<string, Comando> = new Collection();
+  public issueCommands: Collection<string, Comando> = new Collection();
+  public repoCommands: Collection<string, Comando> = new Collection();
+
   public eventos: Collection<string, Evento> = new Collection();
 
   public config: Config = ConfigJson;
@@ -21,32 +28,69 @@ class ExtendedClient extends Client {
     /* ----------------------------------------------------------------------------- */
 
     console.log('|---------------------------------------|');
+    console.log('| Iniciando leitura da Base de Handlers |');
+    console.log('|---------------------------------------|');
+
+    const handlersPath = path.join(__dirname, '..', 'Handlers');
+    readdirSync(handlersPath).forEach((arquivo) => {
+      console.log('> Lendo arquivo Handler: ' + arquivo);
+
+      const { handler } = require(`${handlersPath}/${arquivo}`);
+      console.log('> Handler: ', handler);
+
+      this.handlers.set(handler.nome, handler);
+    });
+
+    /* ----------------------------------------------------------------------------- */
+
+    const regCommands = (
+      folder: string,
+      commands: Collection<string, Comando>
+    ) => {
+      this.logger.separator(3);
+      console.log('> Lendo da Base: ', folder);
+      this.logger.separator(3);
+
+      readdirSync(folder).forEach((dir) => {
+        const comandos = readdirSync(`${folder}/${dir}`).filter((arquivo) =>
+          arquivo.endsWith('.ts')
+        );
+
+        for (const arquivo of comandos) {
+          try {
+            const { comando } = require(`${folder}/${dir}/${arquivo}`);
+
+            if (comando) {
+              console.log(
+                `> Lendo arquivo "${arquivo}" do diretório "${dir}".`
+              );
+              console.log(`> Registrando comando: `);
+              console.log(comando);
+              console.log('------');
+
+              commands.set(comando.nome, comando);
+            }
+          } catch (err) {
+            this.logger.error(err);
+          }
+        }
+      });
+    };
+
+    /* ----------------------------------------------------------------------------- */
+
+    console.log('|---------------------------------------|');
     console.log('| Iniciando leitura da Base de Comandos |');
     console.log('|---------------------------------------|');
 
-    const comandosPath = path.join(__dirname, '..', 'Commands');
-    readdirSync(comandosPath).forEach((dir) => {
-      const comandos = readdirSync(`${comandosPath}/${dir}`).filter((arquivo) =>
-        arquivo.endsWith('.ts')
-      );
+    const devCommandsPath = path.join(__dirname, '..', 'Commands', 'Dev');
+    regCommands(devCommandsPath, this.devCommands);
 
-      for (const arquivo of comandos) {
-        const { comando } = require(`${comandosPath}/${dir}/${arquivo}`);
-        console.log(`> Lendo arquivo "${arquivo}" do diretório "${dir}".`);
-        this.comandos.set(comando.nome, comando);
-        console.log(`> Registrando comando: `);
-        console.log(comando);
-        console.log('------');
+    const issueCommandsPath = path.join(__dirname, '..', 'Commands', 'Issue');
+    regCommands(issueCommandsPath, this.issueCommands);
 
-        if (comando) {
-          if (comando.siglas) {
-            comando.siglas.forEach((sigla) => {
-              this.siglas.set(sigla, comando);
-            });
-          }
-        }
-      }
-    });
+    const repoCommandsPath = path.join(__dirname, '..', 'Commands', 'Repo');
+    regCommands(repoCommandsPath, this.repoCommands);
 
     /* ----------------------------------------------------------------------------- */
 
@@ -54,15 +98,23 @@ class ExtendedClient extends Client {
     console.log('| Iniciando leitura da Base de Eventos |');
     console.log('|--------------------------------------|');
 
-    const eventosPath = path.join(__dirname, '..', 'Events');
-    readdirSync(eventosPath).forEach(async (arquivo) => {
-      console.log('> Arquivo: ' + arquivo);
+    const enventosPath = path.join(__dirname, '..', 'Events');
+    readdirSync(enventosPath).forEach(async (dir) => {
+      const eventos = readdirSync(`${enventosPath}/${dir}`).filter((arquivo) =>
+        arquivo.endsWith('.ts')
+      );
 
-      const { evento } = await import(`${eventosPath}/${arquivo}`);
-      console.log('> Evento: ', evento);
+      for (const arquivo of eventos) {
+        const { evento } = await import(`${enventosPath}/${dir}/${arquivo}`);
+        console.log(
+          `> Lendo arquivo evento "${arquivo}" do diretório "${dir}" | Evento:`
+        );
+        console.log(evento);
+        console.log('------');
 
-      this.eventos.set(evento.nome, evento);
-      this.on(evento.nome, evento.run.bind(null, this));
+        this.eventos.set(evento.nome, evento);
+        this.on(evento.nome, evento.run.bind(null, this));
+      }
     });
   }
 }

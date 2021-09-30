@@ -1,9 +1,9 @@
 import { ActivityOptions, PresenceStatusData } from 'discord.js';
 
 import ExtendedClient from '~/Client';
-import { Evento } from '~/Interfaces';
 
-class GeradorDeStatus {
+// @TODO: Alterar o status baseado na tarefa atual do bot
+export class GeradorDeStatus {
   private setAtividade(
     client: ExtendedClient,
     options: ActivityOptions,
@@ -106,43 +106,4 @@ class GeradorDeStatus {
   }
 }
 
-export const evento: Evento = {
-  nome: 'ready',
-  descricao:
-    'Evento chamado apenas uma vez (quando o BOT eh carregado/iniciado)',
-  run: async (client: ExtendedClient) => {
-    console.log('----------------------------------------------------------');
-    console.log(
-      `CopyRight - ${client.user.tag} was developed by Guilherme Esdras!`
-    );
-
-    console.log(
-      '===================================================================='
-    );
-
-    console.log(`
-    /$$$$$$$              /$$   /$$   /$$ /$$        /$$$$$$  /$$$$$$$   /$$$$$$ 
-    | $$__  $$            | $$  | $$  | $$| $$       /$$__  $$| $$__  $$ /$$__  $$
-    | $$  \\ $$  /$$$$$$  /$$$$$$| $$  | $$| $$      | $$  \\ $$| $$  \\ $$| $$  \\__/
-    | $$$$$$$  /$$__  $$|_  $$_/| $$$$$$$$| $$      | $$$$$$$$| $$  | $$|  $$$$$$ 
-    | $$__  $$| $$  \\ $$  | $$  |_____  $$| $$      | $$__  $$| $$  | $$ \\____  $$
-    | $$  \\ $$| $$  | $$  | $$ /$$    | $$| $$      | $$  | $$| $$  | $$ /$$  \\ $$
-    | $$$$$$$/|  $$$$$$/  |  $$$$/    | $$| $$$$$$$$| $$  | $$| $$$$$$$/|  $$$$$$/
-    |_______/  \\______/    \\___/      |__/|________/|__/  |__/|_______/  \\______/ 
-    `);
-
-    console.log(`
-     _       ___       _ _          
-    (_)___  / _ \\ _ _ | (_)_ _  ___ 
-    | (_-< | (_) | ' \\| | | ' \\/ -_)
-    |_/__/  \\___/|_||_|_|_|_||_\\___|
-    `);
-
-    console.log(
-      '===================================================================='
-    );
-
-    const geradorDeStatus = new GeradorDeStatus();
-    geradorDeStatus.atualizaStatus(client);
-  },
-};
+export const iniciaGeradorDeStatus = () => new GeradorDeStatus();
