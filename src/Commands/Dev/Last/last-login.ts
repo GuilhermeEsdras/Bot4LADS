@@ -1,9 +1,9 @@
 import { MessageEmbed } from 'discord.js';
 
-export default function comment(email: string) {
-  console.log('Testando Comment ' + email);
+export default function lastLogin(email: string) {
+  console.log('Testando Login ' + email);
   const embedTest: MessageEmbed = new MessageEmbed();
   embedTest.setAuthor(email);
-  embedTest.setDescription('Comment');
+  embedTest.setDescription('Login');
   return embedTest;
 }

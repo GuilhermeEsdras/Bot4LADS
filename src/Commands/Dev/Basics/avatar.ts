@@ -4,7 +4,6 @@ import ExtendedClient from '~/Client';
 import { Comando } from '~/Interfaces';
 
 import { criaLogger, Logger } from '../../../Logs';
-import request from '../../../Services/GitLab/gitlab-request';
 import { gitLabService } from '../../../Services/GitLab/gitlab-services';
 
 export const comando: Comando = {
@@ -24,6 +23,8 @@ export const comando: Comando = {
       .catch((err) => logger.error(err));
     const data = await response;
     console.log(data);
+
+    msg.reply(data.avatar_url);
 
     logger.success('Comando finalizado com sucesso.');
   },

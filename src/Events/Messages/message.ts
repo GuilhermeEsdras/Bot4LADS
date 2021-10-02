@@ -27,6 +27,7 @@ export const evento: Evento = {
     // const commandHandler: CommandHandler = new CommandHandler(handlerName);
     // commandHandler.handle(client, msg, args);
 
+    // const handler: Handler = new Handler(handlerName);
     const handler: Handler = client.handlers.get(handlerName);
     handler.handle(client, msg, args);
   },

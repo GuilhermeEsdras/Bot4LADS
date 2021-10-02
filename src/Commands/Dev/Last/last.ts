@@ -4,10 +4,10 @@ import ExtendedClient from '~/Client';
 import { Comando } from '~/Interfaces';
 
 import { criaLogger, Logger } from '../../../Logs';
-import activity from './activity';
-import comment from './comment';
-import commit from './commit';
-import login from './login';
+import lastActivity from './last-activity';
+import lastComment from './last-comment';
+import lastCommit from './last-commit';
+import lastLogin from './last-login';
 
 export const comando: Comando = {
   nome: 'last',
@@ -24,23 +24,26 @@ export const comando: Comando = {
 
     switch (subcmd) {
       case 'activity':
-        response = activity(email);
+        response = await lastActivity(email);
         break;
 
       case 'comment':
-        response = comment(email);
+        response = await lastComment(email);
         break;
 
       case 'commit':
-        response = commit(email);
+        response = new MessageEmbed().setDescription('kladkaskdkasdkakd');
+        // response = commit(email);
         break;
 
       case 'login':
-        response = login(email);
+        // response = login(email);
         break;
 
       default:
-        msg.reply(`Desculpe! Não consegui encontrar o comando "${subcmd}"`);
+        msg.reply(
+          `Este comando requer um subcomando. O subcomando informado ("${subcmd}") não é válido`
+        );
         break;
     }
 
