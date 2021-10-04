@@ -4,10 +4,12 @@ import ExtendedClient from '~/Client';
 import { Comando } from '~/Interfaces';
 
 import { criaLogger, Logger } from '../../../Logs';
-import activity from './activity';
-import comment from './comment';
-import commit from './commit';
-import login from './login';
+import lastActivity from './last-activity';
+import lastComment from './last-comment';
+import lastCommit from './last-commit';
+import lastMergeRequest from './last-mergerequest';
+import lastNewBranch from './last-newbranch';
+import lastPush from './last-push';
 
 export const comando: Comando = {
   nome: 'last',
@@ -24,44 +26,43 @@ export const comando: Comando = {
 
     switch (subcmd) {
       case 'activity':
-        response = activity(email);
+        response = await lastActivity(email);
+        logger.ok(`Resposta obtida para ${subcmd}`);
         break;
 
       case 'comment':
-        response = comment(email);
+        response = await lastComment(email);
+        logger.ok(`Resposta obtida para ${subcmd}`);
+        break;
+
+      case 'push':
+        response = await lastPush(email);
+        logger.ok(`Resposta obtida para ${subcmd}`);
+        break;
+
+      case 'mr':
+        response = await lastMergeRequest(email);
+        logger.ok(`Resposta obtida para ${subcmd}`);
         break;
 
       case 'commit':
-        response = commit(email);
+        response = await lastCommit(email);
+        logger.ok(`Resposta obtida para ${subcmd}`);
         break;
 
-      case 'login':
-        response = login(email);
+      case 'newbranch':
+        response = await lastNewBranch(email);
+        logger.ok(`Resposta obtida para ${subcmd}`);
         break;
 
       default:
-        msg.reply(`Desculpe! Não consegui encontrar o comando "${subcmd}"`);
+        msg.reply(
+          `Este comando requer um subcomando. O subcomando informado ("${subcmd}") não é válido`
+        );
         break;
     }
 
     msg.channel.send(response);
-
-    // const instance = axios.create({
-    //   baseURL: settings.baseURL,
-    //   timeout: settings.timeout,
-    //   headers: {
-    //     Authorization: settings.headers_authorization,
-    //   },
-    // });
-
-    // const response = await instance
-    //   .get(`/avatar?email=${email}`)
-    //   .then((resp) => {
-    //     console.log(resp.data);
-    //     return resp.data;
-    //   });
-
-    // msg.reply(response.avatar_url);
-    // logger.success('Comando finalizado com sucesso.');
+    logger.success(`Executado com sucesso! Com subcomando: ${subcmd}`);
   },
 };

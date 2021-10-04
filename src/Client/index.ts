@@ -7,14 +7,13 @@ import { Config, Comando, Evento, Handler } from '~/Interfaces';
 
 import ConfigJson from '../Data/config.json';
 import { criaLogger, Logger } from '../Logs';
-import { iniciaPrintUtils, PrintUtils } from '../Utils/PrintUtils';
 
 class ExtendedClient extends Client {
   public logger: Logger = criaLogger(ExtendedClient.name);
-  public printUtils: PrintUtils = iniciaPrintUtils();
 
   public handlers: Collection<string, Handler> = new Collection();
 
+  public admCommands: Collection<string, Comando> = new Collection();
   public devCommands: Collection<string, Comando> = new Collection();
   public issueCommands: Collection<string, Comando> = new Collection();
   public repoCommands: Collection<string, Comando> = new Collection();
@@ -29,16 +28,23 @@ class ExtendedClient extends Client {
 
     /* ----------------------------------------------------------------------------- */
 
-    this.printUtils.printHeader('Iniciando leitura da Base de Handlers', '-');
+    this.logger.printHeader('Iniciando leitura da Base de Handlers', '-');
 
     const handlersPath = path.join(__dirname, '..', 'Handlers');
     readdirSync(handlersPath).forEach((arquivo) => {
-      console.log('> Lendo arquivo Handler: ' + arquivo);
+      try {
+        console.log('> Lendo arquivo Handler: ' + arquivo);
 
-      const { handler } = require(`${handlersPath}/${arquivo}`);
-      console.log('> Handler: ', handler);
-
-      this.handlers.set(handler.nome, handler);
+        const { handler } = require(`${handlersPath}/${arquivo}`);
+        if (handler) {
+          console.log('> Handler: ', handler);
+          this.handlers.set(handler.nome, handler);
+        } else {
+          this.logger.info('Não é um arquivo handler! Prosseguindo...');
+        }
+      } catch (error) {
+        this.logger.info('É diretório! Prosseguindo...');
+      }
     });
 
     /* ----------------------------------------------------------------------------- */
@@ -79,7 +85,10 @@ class ExtendedClient extends Client {
 
     /* ----------------------------------------------------------------------------- */
 
-    this.printUtils.printHeader('Iniciando leitura das Bases de Comandos', '-');
+    this.logger.printHeader('Iniciando leitura das Bases de Comandos', '-');
+
+    const admCommandsPath = path.join(__dirname, '..', 'Commands', 'Admin');
+    regCommands(admCommandsPath, this.admCommands);
 
     const devCommandsPath = path.join(__dirname, '..', 'Commands', 'Dev');
     regCommands(devCommandsPath, this.devCommands);
@@ -92,7 +101,7 @@ class ExtendedClient extends Client {
 
     /* ----------------------------------------------------------------------------- */
 
-    this.printUtils.printHeader('Iniciando leitura da Base de Eventos', '-');
+    this.logger.printHeader('Iniciando leitura da Base de Eventos', '-');
 
     const enventosPath = path.join(__dirname, '..', 'Events');
     readdirSync(enventosPath).forEach(async (dir) => {
