@@ -24,6 +24,10 @@ export const evento: Evento = {
     const handlerName = args.shift().toLocaleLowerCase();
     if (!handlerName) return;
 
+    // const commandHandler: CommandHandler = new CommandHandler(handlerName);
+    // commandHandler.handle(client, msg, args);
+
+    // const handler: Handler = new Handler(handlerName);
     const handler: Handler = client.handlers.get(handlerName);
     handler.handle(client, msg, args);
   },

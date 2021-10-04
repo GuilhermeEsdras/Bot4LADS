@@ -5,12 +5,12 @@ import { Comando } from '~/Interfaces';
 
 import { criaLogger, Logger } from '../../Logs';
 
-export default function handleCommand(
+export default async function handleCommand(
   client: ExtendedClient,
   msg: Message,
   args: string[],
   comando: Comando
-): boolean {
+): Promise<boolean> {
   const logger: Logger = criaLogger(
     `(Handle) Comando: "${comando.nome}" por "${msg.member.user.tag}"`
   );
@@ -106,7 +106,7 @@ export default function handleCommand(
 
   logger.success('Executado com sucesso!');
 
-  console.log(`|------------------------------------------------|`);
+  logger.separator(10);
 
   return true;
 }

@@ -4,7 +4,7 @@ import ExtendedClient from '~/Client';
 import { Comando } from '~/Interfaces';
 
 import { criaLogger, Logger } from '../../../Logs';
-import { getUserAvatar } from '../../../Services/GitLab/gitlab-services';
+import { gitLabService } from '../../../Services/GitLab/gitlab-services';
 
 export const comando: Comando = {
   nome: 'avatar',
@@ -14,19 +14,17 @@ export const comando: Comando = {
     const logger: Logger = criaLogger(
       `Comando "${comando.nome}" (por ${msg.member.user.tag})`
     );
-
     const email = args[0];
+    const response = await gitLabService()
+      .getUserAvatar(email)
+      .then((resp) => {
+        return resp;
+      })
+      .catch((err) => logger.error(err));
+    const data = await response;
+    console.log(data);
 
-    // const response = await instance
-    //   .get(`/avatar?email=${email}`)
-    //   .then((resp) => {
-    //     console.log(resp.data);
-    //     return resp.data;
-    //   });
-
-    const response = await getUserAvatar(email);
-
-    console.log(response);
+    msg.reply(data.avatar_url);
 
     logger.success('Comando finalizado com sucesso.');
   },

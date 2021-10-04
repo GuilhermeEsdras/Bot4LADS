@@ -2,7 +2,7 @@ import ExtendedClient from '~/Client';
 import { Evento } from '~/Interfaces';
 
 import { criaLogger, Logger } from '../../Logs';
-import { GeradorDeStatus, geraStatus } from '../../Status/GeradorDeStatus';
+import { GeradorDeStatus, geraStatus } from '../../Utils/GeradorDeStatus';
 
 export const evento: Evento = {
   nome: 'ready',
@@ -10,20 +10,16 @@ export const evento: Evento = {
     'Evento chamado apenas uma vez (quando o BOT eh carregado/iniciado)',
   run: async (client: ExtendedClient) => {
     const logger: Logger = criaLogger(evento.nome);
-
-    const sep = (sepStr: string, quant: number) => {
-      console.log(sepStr.repeat(quant));
-    };
     const sepStr = '=';
-    const sepQuant = 62;
+    const sepQuant = 75;
 
-    sep(sepStr, sepQuant);
+    logger.repeatSep(sepStr, sepQuant);
 
     logger.warn(
       `CopyRight \n ${client.user.tag} was developed by Guilherme Esdras!`
     );
 
-    sep(sepStr, sepQuant);
+    logger.repeatSep(sepStr, sepQuant);
 
     console.log(`
      /$$$$$$$              /$$   /$$   /$$ /$$        /$$$$$$  /$$$$$$$   /$$$$$$ 
@@ -43,7 +39,7 @@ export const evento: Evento = {
     |_/__/  \\___/|_||_|_|_|_||_\\___|
     `);
 
-    sep(sepStr, sepQuant);
+    logger.repeatSep(sepStr, sepQuant);
 
     const geradorDeStatus: GeradorDeStatus = geraStatus(false);
     geradorDeStatus.atualizaStatus(client);
