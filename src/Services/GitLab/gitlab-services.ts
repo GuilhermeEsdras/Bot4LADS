@@ -52,7 +52,9 @@ export class GitLabServices {
         console.log(error);
       })
       .finally(() =>
-        this.logger.info('Request getUserContributionEvents finalizado')
+        this.logger.info(
+          `Request getUserContributionEvents na pagina ${pagina} finalizado`
+        )
       );
   }
 
