@@ -1,6 +1,6 @@
 import { GitLabServices } from '../gitlab-services';
 
-export type ActivityTypes = 'COMMENT' | 'PUSH' | 'MR';
+export type ActivityTypes = 'COMMENT' | 'PUSH' | 'MR' | 'COMMIT' | 'NEW BRANCH';
 
 class UserActivitiesServices extends GitLabServices {
   private _email: string;
@@ -14,70 +14,153 @@ class UserActivitiesServices extends GitLabServices {
   }
 
   public async getLastActivities(quant: number, activityType?: ActivityTypes) {
-    return await this.searchUser(this.email)
-      .then((userData) => {
-        return this.getUserContributionEvents(userData.id);
-      })
-      .then((userContributionEvents: Record<string, any>[]) => {
-        const activies = [];
-        let cont = 0;
-        console.log();
+    return await this.searchUser(this.email).then(async (userData) => {
+      const activities = [];
+
+      let atividadesEncontradas = 0;
+      let pagina = 1;
+
+      while (atividadesEncontradas < quant) {
+        const userContributionEvents: Record<string, any>[] =
+          await this.getUserContributionEvents(userData.id, pagina++);
+        if (!userContributionEvents.length) break;
+
+        const procuraAtividade = (target: string, condition: string) => {
+          for (
+            let i = 0;
+            i < userContributionEvents.length && atividadesEncontradas < quant;
+            i++
+          ) {
+            if (target.startsWith(condition)) {
+              activities.push(userContributionEvents[i]);
+              atividadesEncontradas++;
+            }
+          }
+        };
 
         if (activityType) {
           if (activityType == 'COMMENT') {
-            userContributionEvents.forEach((activity) => {
-              if (cont == quant) return;
-              const actionName: string = activity.action_name;
-              if (actionName.startsWith('commented')) activies.push(activity);
-              cont++;
-            });
+            for (
+              let i = 0;
+              i < userContributionEvents.length &&
+              atividadesEncontradas < quant;
+              i++
+            ) {
+              const actionName: string = userContributionEvents[i].action_name;
+              if (actionName.startsWith('commented')) {
+                // É um comentário!
+                activities.push(userContributionEvents[i]);
+                atividadesEncontradas++;
+              }
+            }
           } else if (activityType == 'MR') {
-            userContributionEvents.forEach((activity) => {
-              if (cont == quant) return;
-              const actionName: string = activity.action_name;
-              const targetType: string | null = activity.target_type;
-              if (
-                actionName == 'opened' &&
-                targetType &&
-                targetType == 'MergeRequest'
-              )
-                activies.push(activity);
-              cont++;
-            });
+            for (
+              let i = 0;
+              i < userContributionEvents.length &&
+              atividadesEncontradas < quant;
+              i++
+            ) {
+              const targetType: string = userContributionEvents[i].target_type;
+              if (targetType == 'MergeRequest') {
+                // É um MR!
+                activities.push(userContributionEvents[i]);
+                atividadesEncontradas++;
+              }
+            }
           } else if (activityType == 'PUSH') {
-            userContributionEvents.forEach((activity) => {
-              if (cont == quant) return;
-              const actionName: string = activity.action_name;
-              const targetType: string | null = activity.target_type;
-              if (
-                actionName == 'opened' &&
-                targetType &&
-                targetType == 'MergeRequest'
-              )
-                activies.push(activity);
-              cont++;
-            });
+            for (
+              let i = 0;
+              i < userContributionEvents.length &&
+              atividadesEncontradas < quant;
+              i++
+            ) {
+              const actionName: string = userContributionEvents[i].action_name;
+              if (actionName.startsWith('pushed')) {
+                // É um Push!
+                activities.push(userContributionEvents[i]);
+                atividadesEncontradas++;
+              }
+            }
+          } else if (activityType == 'COMMIT') {
+            for (
+              let i = 0;
+              i < userContributionEvents.length &&
+              atividadesEncontradas < quant;
+              i++
+            ) {
+              const actionName: string = userContributionEvents[i].action_name;
+              if (actionName == 'pushed to') {
+                // É um commit!
+                activities.push(userContributionEvents[i]);
+                atividadesEncontradas++;
+              }
+            }
+          } else if (activityType == 'NEW BRANCH') {
+            for (
+              let i = 0;
+              i < userContributionEvents.length &&
+              atividadesEncontradas < quant;
+              i++
+            ) {
+              const actionName: string = userContributionEvents[i].action_name;
+              if (actionName == 'pushed new') {
+                // É uma nova branch!
+                activities.push(userContributionEvents[i]);
+                atividadesEncontradas++;
+              }
+            }
           }
         } else {
-          userContributionEvents.forEach((activity) => {
-            if (cont == quant) return;
-            activies.push(activity);
-            cont++;
-          });
+          for (
+            let i = 0;
+            i < userContributionEvents.length && atividadesEncontradas < quant;
+            i++
+          ) {
+            activities.push(userContributionEvents[i]);
+            atividadesEncontradas++;
+          }
         }
-      });
+      }
+
+      return activities;
+    });
   }
 
   public async getLastComments(quant: number) {
     return await this.getLastActivities(quant, 'COMMENT').then(
       (lastComments) => {
-        console.log('getlast', lastComments);
         return lastComments;
       }
     );
   }
 
-  public async getLastLogin() {}
+  public async getLastMergeRequests(quant: number) {
+    return await this.getLastActivities(quant, 'MR').then(
+      (lastMergeRequests) => {
+        return lastMergeRequests;
+      }
+    );
+  }
+
+  public async getLastPushs(quant: number) {
+    return await this.getLastActivities(quant, 'PUSH').then((lastPush) => {
+      return lastPush;
+    });
+  }
+
+  public async getLastCommits(quant: number) {
+    return await this.getLastActivities(quant, 'COMMIT').then((lastPush) => {
+      return lastPush;
+    });
+  }
+
+  public async getLastNewBranches(quant: number) {
+    return await this.getLastActivities(quant, 'NEW BRANCH').then(
+      (lastPush) => {
+        return lastPush;
+      }
+    );
+  }
 }
 
 export const userActivitiesServices = (email: string) =>

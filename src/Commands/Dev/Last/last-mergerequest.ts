@@ -2,13 +2,13 @@ import { MessageEmbed } from 'discord.js';
 
 import { userActivitiesServices } from '../../../Services/GitLab/User/activities';
 
-export default async function lastComment(email: string) {
+export default async function lastMergeRequest(email: string) {
   return await userActivitiesServices(email)
-    .getLastComments(2)
-    .then((comment) => {
-      console.log(comment);
+    .getLastMergeRequests(2)
+    .then((mr) => {
+      console.log(mr);
       const embededResponse: MessageEmbed = new MessageEmbed().setDescription(
-        'Comentario: ' + `${comment[1].note.body}`
+        'MergeRequest title: ' + `${mr[0].target_title}`
       );
       return embededResponse;
     });

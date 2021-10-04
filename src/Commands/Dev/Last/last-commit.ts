@@ -1,9 +1,15 @@
 import { MessageEmbed } from 'discord.js';
 
-export default function lastCommit(email: string) {
-  console.log('Testando Commit ' + email);
-  const embedTest: MessageEmbed = new MessageEmbed();
-  embedTest.setAuthor(email);
-  embedTest.setDescription('Commit');
-  return embedTest;
+import { userActivitiesServices } from '../../../Services/GitLab/User/activities';
+
+export default async function lastCommit(email: string) {
+  return await userActivitiesServices(email)
+    .getLastCommits(2)
+    .then((commit) => {
+      console.log(commit);
+      const embededResponse: MessageEmbed = new MessageEmbed().setDescription(
+        'Commit: ' + `${commit[0].push_data.commit_title}`
+      );
+      return embededResponse;
+    });
 }

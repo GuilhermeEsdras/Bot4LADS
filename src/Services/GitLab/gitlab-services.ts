@@ -39,9 +39,9 @@ export class GitLabServices {
       .finally(() => this.logger.info('Request searchUser finalizado'));
   }
 
-  public async getUserContributionEvents(userId: number) {
+  public async getUserContributionEvents(userId: number, pagina: number) {
     return request
-      .get(`/users/${userId}/events`)
+      .get(`/users/${userId}/events?page=${pagina}`)
       .then((response) => {
         return response.data;
       })

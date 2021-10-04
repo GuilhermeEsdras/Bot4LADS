@@ -8,7 +8,7 @@ export default async function lastActivity(
   return await userActivitiesServices(email)
     .getLastActivities(1)
     .then((activies) => {
-      console.log(activies[0]);
+      console.log(activies);
       const embededResponse = new MessageEmbed().setDescription('blabla');
       return embededResponse;
     });

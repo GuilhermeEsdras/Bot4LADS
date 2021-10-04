@@ -7,7 +7,9 @@ import { criaLogger, Logger } from '../../../Logs';
 import lastActivity from './last-activity';
 import lastComment from './last-comment';
 import lastCommit from './last-commit';
-import lastLogin from './last-login';
+import lastMergeRequest from './last-mergerequest';
+import lastNewBranch from './last-newbranch';
+import lastPush from './last-push';
 
 export const comando: Comando = {
   nome: 'last',
@@ -25,19 +27,32 @@ export const comando: Comando = {
     switch (subcmd) {
       case 'activity':
         response = await lastActivity(email);
+        logger.ok(`Resposta obtida para ${subcmd}`);
         break;
 
       case 'comment':
         response = await lastComment(email);
+        logger.ok(`Resposta obtida para ${subcmd}`);
+        break;
+
+      case 'push':
+        response = await lastPush(email);
+        logger.ok(`Resposta obtida para ${subcmd}`);
+        break;
+
+      case 'mr':
+        response = await lastMergeRequest(email);
+        logger.ok(`Resposta obtida para ${subcmd}`);
         break;
 
       case 'commit':
-        response = new MessageEmbed().setDescription('kladkaskdkasdkakd');
-        // response = commit(email);
+        response = await lastCommit(email);
+        logger.ok(`Resposta obtida para ${subcmd}`);
         break;
 
-      case 'login':
-        // response = login(email);
+      case 'newbranch':
+        response = await lastNewBranch(email);
+        logger.ok(`Resposta obtida para ${subcmd}`);
         break;
 
       default:
@@ -48,23 +63,6 @@ export const comando: Comando = {
     }
 
     msg.channel.send(response);
-
-    // const instance = axios.create({
-    //   baseURL: settings.baseURL,
-    //   timeout: settings.timeout,
-    //   headers: {
-    //     Authorization: settings.headers_authorization,
-    //   },
-    // });
-
-    // const response = await instance
-    //   .get(`/avatar?email=${email}`)
-    //   .then((resp) => {
-    //     console.log(resp.data);
-    //     return resp.data;
-    //   });
-
-    // msg.reply(response.avatar_url);
-    // logger.success('Comando finalizado com sucesso.');
+    logger.success(`Executado com sucesso! Com subcomando: ${subcmd}`);
   },
 };
