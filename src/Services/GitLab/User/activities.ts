@@ -1,6 +1,6 @@
 import { GitLabServices } from '../gitlab-services';
 
-export type ActivityTypes = 'COMMENT' | 'PUSH' | 'MR' | 'COMMIT' | 'NEW BRANCH';
+export type ActivityTypes = 'COMMENT' | 'PUSH' | 'MR' | 'COMMIT' | 'NEW_BRANCH';
 
 class UserActivitiesServices extends GitLabServices {
   private _email: string;
@@ -11,6 +11,70 @@ class UserActivitiesServices extends GitLabServices {
   constructor(email: string) {
     super();
     this._email = email;
+  }
+
+  public async getNumberOfActivities(activityType: ActivityTypes) {
+    return await this.searchUser(this.email).then(async (userData) => {
+      let numberOfActivies = 0;
+      let pagina = 1;
+      let stop = false;
+      while (!stop) {
+        const userContributionEventsInThisPage =
+          await this.getUserContributionEvents(userData.id, pagina++);
+
+        if (!userContributionEventsInThisPage.length) stop = !stop;
+        else {
+          if (activityType == 'COMMENT') {
+            for (let i = 0; i < userContributionEventsInThisPage.length; i++) {
+              const actionName: string =
+                userContributionEventsInThisPage[i].action_name;
+              if (actionName.startsWith('commented')) {
+                // É um comentário!
+                numberOfActivies++;
+              }
+            }
+          } else if (activityType == 'MR') {
+            for (let i = 0; i < userContributionEventsInThisPage.length; i++) {
+              const actionName: string =
+                userContributionEventsInThisPage[i].target_type;
+              if (actionName == 'MergeRequest') {
+                // É um MR!
+                numberOfActivies++;
+              }
+            }
+          } else if (activityType == 'PUSH') {
+            for (let i = 0; i < userContributionEventsInThisPage.length; i++) {
+              const actionName: string =
+                userContributionEventsInThisPage[i].action_name;
+              if (actionName.startsWith('pushed')) {
+                // É um Push!
+                numberOfActivies++;
+              }
+            }
+          } else if (activityType == 'COMMIT') {
+            for (let i = 0; i < userContributionEventsInThisPage.length; i++) {
+              const actionName: string =
+                userContributionEventsInThisPage[i].action_name;
+              if (actionName == 'pushed to') {
+                // É um commit!
+                numberOfActivies++;
+              }
+            }
+          } else if (activityType == 'NEW_BRANCH') {
+            for (let i = 0; i < userContributionEventsInThisPage.length; i++) {
+              const actionName: string =
+                userContributionEventsInThisPage[i].action_name;
+              if (actionName == 'pushed new') {
+                // É uma nova branch!
+                numberOfActivies++;
+              }
+            }
+          }
+        }
+      }
+
+      return numberOfActivies;
+    });
   }
 
   public async getLastActivities(quant: number, activityType?: ActivityTypes) {
@@ -95,7 +159,7 @@ class UserActivitiesServices extends GitLabServices {
                 atividadesEncontradas++;
               }
             }
-          } else if (activityType == 'NEW BRANCH') {
+          } else if (activityType == 'NEW_BRANCH') {
             for (
               let i = 0;
               i < userContributionEvents.length &&
@@ -155,7 +219,7 @@ class UserActivitiesServices extends GitLabServices {
   }
 
   public async getLastNewBranches(quant: number) {
-    return await this.getLastActivities(quant, 'NEW BRANCH').then(
+    return await this.getLastActivities(quant, 'NEW_BRANCH').then(
       (lastPush) => {
         return lastPush;
       }
